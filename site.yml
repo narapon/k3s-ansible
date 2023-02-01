@@ -8,12 +8,17 @@
     - role: download
     # - role: raspberrypi
 
+- hosts: storage
+  become: yes
+  roles:
+    - role: longhorn
+
 - hosts: master
   become: yes
   roles:
     - role: k3s/master
 
-- hosts: node
+- hosts: compute:storage
   become: yes
   roles:
     - role: k3s/node
