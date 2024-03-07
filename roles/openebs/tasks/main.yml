@@ -7,14 +7,22 @@
   debug:
     msg: "{{ huge_pages_status.stdout }}"
 
-- name: Adjust Huge Page count if necessary
-  shell: echo 1024 | sudo tee /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
-  when: huge_pages_status.stdout_lines[0].split(":")[1] < 1024
+- name: Load nvme_tcp kernel module
+  shell: modprobe nvme_tcp
+  ignore_errors: yes
+  
+- name: Adjust Huge Page count to 1024 if necessary
+  shell: |
+    current_count=$(grep HugePages_Total /proc/meminfo | awk '{print $2}')
+    if [[ $current_count -lt 1024 ]]; then
+      echo 1024 | sudo tee /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+    fi
+  check_mode: yes
 
 - name: Persist Huge Page count across reboots
-  shell: echo vm.nr_hugepages = 1024 | sudo tee -a /etc/sysctl.conf
-  when: huge_pages_status.stdout_lines[0].split(":")[1] < 1024
+  shell: echo "vm.nr_hugepages = 1024" | sudo tee -a /etc/sysctl.conf
+  when: huge_pages_status.stdout_lines[0].split(":")[1] | int < 1024
 
-- name: Restart kubelet to apply Huge Page changes
-  shell: systemctl restart kubelet
-  when: huge_pages_status.stdout_lines[0].split(":")[1] < 1024
+- name: Restart k3s to apply Huge Page changes
+  shell: systemctl restart k3s
+  when: huge_pages_status.stdout_lines[0].split(":")[1] | int < 1024
