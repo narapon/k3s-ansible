@@ -12,6 +12,7 @@
   become: yes
   roles:
     - role: longhorn
+    - role: openebs
 
 - hosts: master
   become: yes

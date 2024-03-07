@@ -1,0 +1,5 @@
+# here
+
+```sh
+ansible-playbook site.yml -i inventory/cluster_tiny/hosts.ini -kK
+```

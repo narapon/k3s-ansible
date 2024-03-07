@@ -20,3 +20,4 @@
     pkg:
     - jq 
     - nfs-common
+    - cifs-utils
