@@ -1,0 +1,46 @@
+---
+k3s_cluster:
+  children:
+    server:
+      hosts:
+        10.50.1.10:
+        # 10.50.0.22:
+        # 10.50.0.23:
+    agent:
+      hosts:
+        # 10.50.0.24:
+        # 10.50.0.25:
+        # 10.50.0.26:
+
+  # Required Vars
+  vars:
+    ansible_port: 22
+    ansible_user: narapon
+    # k3s_version: v1.28.7+k3s1
+    k3s_version: v1.29.5+k3s1
+    # token: "mytoken"  # Use ansible vault if you want to keep it secret
+    token: "K10fcdd437fed933656b84eca0534d68103e1d46568d3955fc96447249d211c578a::server:2dfbe46f9a1c05a0a0fe491cf12fddf9"
+    # api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
+    # api_endpoint: 172.17.0.11
+    api_endpoint: 10.50.1.10
+    # extra_server_args: ""
+    extra_server_args: "--data-dir /var/lib/rancher/k3s --flannel-backend=none --cluster-cidr=10.31.0.0/16 --disable-network-policy --disable=traefik --write-kubeconfig-mode 644 --disable servicelb "  # Add extra server args here
+    extra_agent_args: ""
+
+  # Optional vars
+    # api_port: 6443
+    # k3s_server_location: /var/lib/rancher/k3s
+    # systemd_dir: /etc/systemd/system
+    # extra_service_envs: [ 'ENV_VAR1=VALUE1', 'ENV_VAR2=VALUE2' ]
+    # Manifests or Airgap should be either full paths or relative to the playbook directory.
+    # List of locally available manifests to apply to the cluster, useful for PVCs or Traefik modifications.
+    # extra_manifests: [ '/path/to/manifest1.yaml', '/path/to/manifest2.yaml' ]
+    # airgap_dir: /tmp/k3s-airgap-images
+    # user_kubectl: true, by default kubectl is symlinked and configured for use by ansible_user. Set to false to only kubectl via root user.
+    # server_config_yaml:  |
+      # This is now an inner yaml file. Maintain the indentation.
+      # YAML here will be placed as the content of /etc/rancher/k3s/config.yaml
+      # See https://docs.k3s.io/installation/configuration#configuration-file
+
+
+# ExecStart=/usr/local/bin/k3s server --data-dir /var/lib/rancher/k3s --flannel-backend=none --cluster-cidr=10.31.0.0/16 --disable-network-pol>
